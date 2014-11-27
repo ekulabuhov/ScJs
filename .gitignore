@@ -1,0 +1,5 @@
+/*.suo
+/packages
+/ScJs/node_modules
+/ScJs/*.user
+/ScJs/*.log
