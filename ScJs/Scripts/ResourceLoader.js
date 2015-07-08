@@ -1,5 +1,5 @@
-﻿/// <amd-dependency path="preload" />
-define(["require", "exports", "preload"], function(require, exports) {
+/// <amd-dependency path="preload" />
+define(["require", "exports", "preload"], function (require, exports) {
     var ResourceLoader = (function () {
         function ResourceLoader() {
             this._manifest = [
@@ -11,31 +11,29 @@ define(["require", "exports", "preload"], function(require, exports) {
                 "unit/neutral/geyser.png",
                 "unit/neutral/geyshad.png",
                 "game/zconsole.png",
-                "maps/LostTemple.png"
+                "maps/LostTemple.png",
+                "maps/LostTempleMiniMap.png",
+                "wirefram/wirefram.png"
             ];
             this._preload = new createjs.LoadQueue(true, "Resources/");
         }
         ResourceLoader.prototype.get = function (id) {
             return this._preload.getResult(id);
         };
-
         ResourceLoader.getInstance = function () {
             if (ResourceLoader._instance === null) {
                 ResourceLoader._instance = new ResourceLoader();
             }
             return ResourceLoader._instance;
         };
-
         ResourceLoader.prototype.preload = function (callback) {
             this._preload.on("complete", callback);
             this._preload.loadManifest(this._manifest);
         };
-
         ResourceLoader.preload = function (callback) {
             var resourceLoader = ResourceLoader.getInstance();
             resourceLoader.preload(callback);
         };
-
         ResourceLoader.get = function (id) {
             var resourceLoader = ResourceLoader.getInstance();
             return resourceLoader.get(id);
@@ -43,7 +41,5 @@ define(["require", "exports", "preload"], function(require, exports) {
         ResourceLoader._instance = null;
         return ResourceLoader;
     })();
-
-    
     return ResourceLoader;
 });

@@ -7,8 +7,38 @@ import VespeneGeyser = require("VespeneGeyser");
 console.log("Loading resources");
 ResourceLoader.preload(loadComplete);
 
-var stage: createjs.Stage;
-var lblDebug: HTMLDivElement = <HTMLDivElement>document.getElementById("lblDebug");
+var stage: createjs.Stage,
+    map: createjs.Container,
+    lblDebug: HTMLDivElement = <HTMLDivElement>document.getElementById("lblDebug");
+
+var KEYCODE_LEFT = 37,
+    KEYCODE_RIGHT = 39,
+    KEYCODE_UP = 38,
+    KEYCODE_DOWN = 40;
+
+function keyPressed(event: KeyboardEvent) {
+    switch (event.keyCode) {
+        case KEYCODE_LEFT:
+            map.x += 5;
+            if (map.x > 0) {
+                map.x = 0;
+            }
+            break;
+        case KEYCODE_RIGHT:
+            map.x -= 5;
+            break;
+        case KEYCODE_UP:
+            map.y += 5;
+            if (map.y > 0) {
+                map.y = 0;
+            }
+            break;
+        case KEYCODE_DOWN:
+            map.y -= 5;
+            break;
+    }
+
+}
 
 function loadComplete() {
     console.log("Load complete");
@@ -18,25 +48,43 @@ function loadComplete() {
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", handleTick);
 
-    var map = new createjs.Bitmap(<HTMLImageElement>ResourceLoader.get("maps/LostTemple.png"));
+    map = new createjs.Container();
     stage.addChild(map);
+
+    var mapBitmap = new createjs.Bitmap(<HTMLImageElement>ResourceLoader.get("maps/LostTemple.png"));
+    map.addChild(mapBitmap);
 
     var hud = new createjs.Bitmap(<HTMLImageElement>ResourceLoader.get("game/zconsole.png"));
     stage.addChild(hud);
 
+    var miniMap = new createjs.Bitmap(<HTMLImageElement>ResourceLoader.get("maps/LostTempleMiniMap.png"));
+    miniMap.x = 6;
+    miniMap.y = 348;
+    stage.addChild(miniMap);
+
+    var imgWireframSS = <HTMLImageElement>ResourceLoader.get("wirefram/wirefram.png");
+    var wirefram = new createjs.Sprite(new createjs.SpriteSheet({
+        images: [imgWireframSS],
+        frames: { width: 64, height: 64, regX: 0, regY: 0 }
+    }), 0);
+    wirefram.gotoAndStop(47);
+    wirefram.x = 168,
+    wirefram.y = 386;
+    stage.addChild(wirefram);
+
     var vespeneGeyser = new VespeneGeyser();
     vespeneGeyser.x = vespeneGeyser.y = 200;
-    stage.addChild(vespeneGeyser);
+    map.addChild(vespeneGeyser);
 
     var avenger = new Avenger();
     avenger.x = avenger.y = 100;
-    stage.addChild(avenger);
+    map.addChild(avenger);
 
     stage.on("stagemouseup", function (evt: createjs.MouseEvent) {
         graphics.beginStroke("black");
         //graphics.moveTo(avenger.x, avenger.y).lineTo(evt.stageX, evt.stageY);
         graphics.endStroke();
-        var point = stage.globalToLocal(evt.stageX, evt.stageY);
+        var point = map.globalToLocal(evt.stageX, evt.stageY);
         avenger.moveTo(point.x, point.y);
     });
 
@@ -47,6 +95,8 @@ function loadComplete() {
     var graphics = line.graphics;
     graphics.setStrokeStyle(1);
     stage.addChild(line);
+
+    document.onkeydown = keyPressed;
 }
 
 //function resize() {
@@ -93,5 +143,5 @@ function handleTick(evtObj) {
     stage.update(evtObj);
     var measuredFPS = createjs.Ticker.getMeasuredFPS();
     lblDebug.innerText = "Measured FPS: " + measuredFPS.toFixed(0);
-    
+
 }

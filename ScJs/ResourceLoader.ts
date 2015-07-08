@@ -13,7 +13,9 @@ class ResourceLoader {
         "unit/neutral/geyser.png",
         "unit/neutral/geyshad.png",
         "game/zconsole.png",
-        "maps/LostTemple.png"
+        "maps/LostTemple.png",
+        "maps/LostTempleMiniMap.png",
+        "wirefram/wirefram.png"
     ];
 
     constructor() {
